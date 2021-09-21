@@ -1,6 +1,6 @@
 package bouncing_balls;
 
-import jdk.javadoc.internal.doclets.formats.html.SourceToHTMLConverter;
+
 
 /**
  * The physics model.
@@ -24,7 +24,7 @@ class Model {
 		
 		// Initialize the model with a few balls
 		balls = new Ball[2];
-		balls[0] = new Ball(width / 3, height * 0.9, 1.2, 1.6, 0.2);
+		balls[0] = new Ball(width / 3, height * 0.9, 1.5, 1.6, 0.2);
 		balls[1] = new Ball(2 * width / 3, height * 0.7, -0.6, 0.6, 0.3);
 	}
 
@@ -72,17 +72,26 @@ class Model {
 	void collide (Ball[] b){
 		if(b[0].radius + b[1].radius >= Math.abs(b[0].x - b[1].x) && b[0].radius + b[1].radius >= Math.abs(b[0].y - b[1].y)){
 			double angle = 0;
+			double[] vector0 = new double[2];
+			double[] vector1 = new double[2];
+		
 			//räkna ut vinklar
+			//Skapa vektorer
+			for(int i = 0; i<vector0.length; i++){
+				vector0[0] = (b[0].vx);
+				vector0[1] = (b[0].vy);
+				vector1[0] = (b[1].vx);
+				vector1[1] = (b[1].vy);
 
-			//räkna ut resultanten för båda bollarna
-
-			System.out.println(b[0].x + b[0].radius);
-			System.out.println(b[1].x + b[1].radius);
-				
-			b[0].vx *= -1;
-			b[0].vy *= -1;
-			b[1].vx *= -1;
-			b[1].vy *= -1;
+			}
+			
+			//räkna ut resultanten för båda hastigheterna
+			b[0].vx = (vector1[0] - vector0[0])/2; // 
+			b[0].vy = (vector0[1] - vector1[1])/2;
+			b[1].vx = (vector0[0] - vector1[0])/2; // 
+			b[1].vy = (vector0[1] - vector1[1])/2;
+			System.out.println(b[0].vx);
+			System.out.println(b[1].vx);
 			System.out.println("balls collide");
 
 		}
