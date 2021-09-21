@@ -1,5 +1,7 @@
 package bouncing_balls;
 
+import jdk.javadoc.internal.doclets.formats.html.SourceToHTMLConverter;
+
 /**
  * The physics model.
  * 
@@ -25,10 +27,7 @@ class Model {
 		balls[0] = new Ball(width / 3, height * 0.9, 1.2, 1.6, 0.2);
 		balls[1] = new Ball(2 * width / 3, height * 0.7, -0.6, 0.6, 0.3);
 	}
-	double gravity(Ball b, double g, double time){
-		return (-g * time * time)/2;
-	
-	}
+
 
 	void step(double deltaT) {
 		// TODO this method implements one step of simulation with a step deltaT
@@ -46,19 +45,46 @@ class Model {
 			}
 			if (b.y < b.radius || b.y > areaHeight - b.radius) {
 				if (b.vy <0){
+					b.vy -= (10*deltaT)/2;
 					b.y = b.radius;
+					
 				} else{
-					b.y = areaHeight-b.radius;
-					b.vy -= (9.82*deltaT)/2;
+					b.vy -= (10*deltaT)/2;
+					b.y = areaHeight-b.radius;	
+					
 				}
-				b.vy *= -1;
+				b.vy *= -1;	
 			}
+			
 			// compute new position according to the speed of the ball
+			collide(balls);	
 			b.x += deltaT * b.vx;
 			// (at^2)/2
-			b.vy += (-9.82 * deltaT)/2;	
-			// (s = vt + acceleration)		
+			b.vy += (-10 * deltaT)/2;
+			// (s = vt + acceleration)
 			b.y += deltaT * b.vy;
+			
+			
+		}
+
+		
+	}
+	void collide (Ball[] b){
+		if(b[0].radius + b[1].radius >= Math.abs(b[0].x - b[1].x) && b[0].radius + b[1].radius >= Math.abs(b[0].y - b[1].y)){
+			double angle = 0;
+			//räkna ut vinklar
+
+			//räkna ut resultanten för båda bollarna
+
+			System.out.println(b[0].x + b[0].radius);
+			System.out.println(b[1].x + b[1].radius);
+				
+			b[0].vx *= -1;
+			b[0].vy *= -1;
+			b[1].vx *= -1;
+			b[1].vy *= -1;
+			System.out.println("balls collide");
+
 		}
 	}
 
