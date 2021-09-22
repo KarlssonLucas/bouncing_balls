@@ -72,15 +72,16 @@ class Model {
 	void collide (Ball[] b){
 		if(b[0].radius + b[1].radius >= Math.abs(b[0].x - b[1].x) && b[0].radius + b[1].radius >= Math.abs(b[0].y - b[1].y)){
 			double angle = Math.tan((b[0].y - b[1].y)/(b[0].x - b[1].x));
-
-            double x = ((b[0].x - b[1].x) * Math.cos(angle) - (b[0].y - b[1].y) * Math.sin(angle));
-            double y = ((b[0].y - b[1].y) * Math.cos(angle) + (b[0].x - b[1].x) * Math.sin(angle));
-
-            ////////// bajs kod ovanför -.-
+			double angle1 = Math.tan((b[1].y - b[0].y)/(b[1].x - b[0].x));
 
             double theta0 = Math.atan2(b[0].vy, b[0].vx);
             double theta1 = Math.atan2(b[1].vy, b[1].vx);
             double ang = Math.atan2(b[0].y - b[1].y, b[0].x - b[1].x);
+
+            b[0].vx = Math.cos(angle) * b[0].vx - Math.sin(angle) * b[0].vy;
+            b[0].vy = Math.sin(angle) * b[0].vx + Math.cos(angle) * b[0].vy;
+            b[1].vx = Math.cos(angle1) * b[1].vx - Math.sin(angle1) * b[1].vy;
+            b[1].vy = Math.sin(angle1) * b[1].vx + Math.cos(angle1) * b[1].vy;
 
             // New velocity
             double newb0vx = ((b[0].weight*b[0].vx - b[1].weight*b[0].vx + 2*b[1].weight*b[1].vx)/(b[0].weight + b[1].weight));
@@ -89,18 +90,16 @@ class Model {
             b[1].vx = ((2*b[0].weight * b[0].vx + b[1].weight*b[1].vx - b[0].weight*b[1].vx)/(b[0].weight + b[1].weight)) ;
             b[1].vy = ((2*b[0].weight * b[0].vy + b[1].weight*b[1].vy - b[0].weight*b[1].vy)/(b[0].weight + b[1].weight)) ;
 
-            b[0].vx = Math.cos(angle) * newb0vx - Math.sin(angle) * newb0vy;
-            b[0].vy = Math.sin(angle) * newb0vx + Math.cos(angle) * newb0vy;
-
-            b[1].vx = Math.cos(angle) * b[1].vx - Math.sin(angle) * b[1].vy;
-            b[1].vy = Math.sin(angle) * b[1].vx + Math.cos(angle) * b[1].vy;
+            b[0].vx = Math.cos(-angle) * newb0vx - Math.sin(-angle) * newb0vy;
+            b[0].vy = Math.sin(-angle) * newb0vx + Math.cos(-angle) * newb0vy;
+            b[1].vx = Math.cos(-angle1) * b[1].vx - Math.sin(-angle1) * b[1].vy;
+            b[1].vy = Math.sin(-angle1) * b[1].vx + Math.cos(-angle1) * b[1].vy;
 
             b[0].x += b[0].vx * 0.001;
             b[0].y += b[0].vy * 0.001;
             b[1].x += b[1].vx * 0.001;
             b[1].y += b[1].vy * 0.001;
 
-            
 		}
 	}
 
