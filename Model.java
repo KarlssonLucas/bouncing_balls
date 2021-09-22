@@ -45,11 +45,11 @@ class Model {
 			}
 			if (b.y < b.radius || b.y > areaHeight - b.radius) {
 				if (b.vy <0){
-					b.vy -= (10*deltaT)/2;
+					b.vy -= (3*deltaT)/2;
 					b.y = b.radius;
 					
 				} else{
-					b.vy -= (10*deltaT)/2;
+					b.vy -= (3*deltaT)/2;
 					b.y = areaHeight-b.radius;	
 					
 				}
@@ -60,7 +60,7 @@ class Model {
 			collide(balls);	
 			b.x += deltaT * b.vx;
 			// (at^2)/2
-			b.vy += (-10 * deltaT)/2;
+			b.vy += (-3 * deltaT)/2;
 			// (s = vt + acceleration)
 			b.y += deltaT * b.vy;
 			
@@ -71,29 +71,36 @@ class Model {
 	}
 	void collide (Ball[] b){
 		if(b[0].radius + b[1].radius >= Math.abs(b[0].x - b[1].x) && b[0].radius + b[1].radius >= Math.abs(b[0].y - b[1].y)){
-			double angle = 0;
-			double[] vector0 = new double[2];
-			double[] vector1 = new double[2];
-		
-			//räkna ut vinklar
-			//Skapa vektorer
-			for(int i = 0; i<vector0.length; i++){
-				vector0[0] = (b[0].vx);
-				vector0[1] = (b[0].vy);
-				vector1[0] = (b[1].vx);
-				vector1[1] = (b[1].vy);
+			double angle = Math.tan((b[0].y - b[1].y)/(b[0].x - b[1].x));
 
-			}
-			
-			//räkna ut resultanten för båda hastigheterna
-			b[0].vx = (vector1[0] - vector0[0])/2; // 
-			b[0].vy = (vector0[1] - vector1[1])/2;
-			b[1].vx = (vector0[0] - vector1[0])/2; // 
-			b[1].vy = (vector0[1] - vector1[1])/2;
-			System.out.println(b[0].vx);
-			System.out.println(b[1].vx);
-			System.out.println("balls collide");
+            double x = ((b[0].x - b[1].x) * Math.cos(angle) - (b[0].y - b[1].y) * Math.sin(angle));
+            double y = ((b[0].y - b[1].y) * Math.cos(angle) + (b[0].x - b[1].x) * Math.sin(angle));
 
+            ////////// bajs kod ovanför -.-
+
+            double theta0 = Math.atan2(b[0].vy, b[0].vx);
+            double theta1 = Math.atan2(b[1].vy, b[1].vx);
+            double ang = Math.atan2(b[0].y - b[1].y, b[0].x - b[1].x);
+
+            // New velocity
+            double newb0vx = ((b[0].weight*b[0].vx - b[1].weight*b[0].vx + 2*b[1].weight*b[1].vx)/(b[0].weight + b[1].weight));
+            double newb0vy = ((b[0].weight*b[0].vy - b[1].weight*b[0].vy + 2*b[1].weight*b[1].vy)/(b[0].weight + b[1].weight));
+
+            b[1].vx = ((2*b[0].weight * b[0].vx + b[1].weight*b[1].vx - b[0].weight*b[1].vx)/(b[0].weight + b[1].weight)) ;
+            b[1].vy = ((2*b[0].weight * b[0].vy + b[1].weight*b[1].vy - b[0].weight*b[1].vy)/(b[0].weight + b[1].weight)) ;
+
+            b[0].vx = Math.cos(angle) * newb0vx - Math.sin(angle) * newb0vy;
+            b[0].vy = Math.sin(angle) * newb0vx + Math.cos(angle) * newb0vy;
+
+            b[1].vx = Math.cos(angle) * b[1].vx - Math.sin(angle) * b[1].vy;
+            b[1].vy = Math.sin(angle) * b[1].vx + Math.cos(angle) * b[1].vy;
+
+            b[0].x += b[0].vx * 0.001;
+            b[0].y += b[0].vy * 0.001;
+            b[1].x += b[1].vx * 0.001;
+            b[1].y += b[1].vy * 0.001;
+
+            
 		}
 	}
 
@@ -109,11 +116,12 @@ class Model {
 			this.vx = vx;
 			this.vy = vy;
 			this.radius = r;
+            this.weight = Math.pow(r,2);
 		}
 
 		/**
 		 * Position, speed, and radius of the ball. You may wish to add other attributes.
 		 */
-		double x, y, vx, vy, radius;
+		double x, y, vx, vy, radius, weight;
 	}
 }
