@@ -24,12 +24,13 @@ class Model {
 		
 		// Initialize the model with a few balls
 		balls = new Ball[2];
-		balls[0] = new Ball(width / 3, height * 0.9, 1.5, 1.6, 0.2);
-		balls[1] = new Ball(2 * width / 3, height * 0.7, -0.6, 0.6, 0.3);
+		balls[0] = new Ball(width / 3, height * 0.7, 1, 5, 0.2);
+		balls[1] = new Ball(width / 3, height * 20, 0, 5, 0.2);
 	}
 
 
 	void step(double deltaT) {
+		double g = 0;
 		// TODO this method implements one step of simulation with a step deltaT
 		for (Ball b : balls) {
 			
@@ -37,6 +38,7 @@ class Model {
 			if (b.x < b.radius || b.x > areaWidth - b.radius) {
 				if (b.vx < 0){
 					b.x = b.radius;
+					
 				} else{
 					b.x = areaWidth-b.radius;
 				}
@@ -45,11 +47,13 @@ class Model {
 			}
 			if (b.y < b.radius || b.y > areaHeight - b.radius) {
 				if (b.vy <0){
-					b.vy -= (3*deltaT)/2;
+					b.vy -= (g*deltaT)/2;
 					b.y = b.radius;
+					System.out.println(b.vy + b.vy);
+					
 					
 				} else{
-					b.vy -= (3*deltaT)/2;
+					b.vy -= (g*deltaT)/2;
 					b.y = areaHeight-b.radius;	
 					
 				}
@@ -60,7 +64,7 @@ class Model {
 			collide(balls);	
 			b.x += deltaT * b.vx;
 			// (at^2)/2
-			b.vy += (-3 * deltaT)/2;
+			b.vy += (-g * deltaT)/2;
 			// (s = vt + acceleration)
 			b.y += deltaT * b.vy;
 			
@@ -74,50 +78,54 @@ class Model {
 			double angle = 0;
 			// Calculating angle
 			if(b[0].x > b[1].x  && b[0].y > b[1].y){
-				angle = Math.tan((b[0].y - b[1].y)/(b[0].x - b[1].x));
+				
 			}
 			if(b[0].x < b[1].x  && b[0].y > b[1].y){
-				angle = Math.PI/2 + Math.tan((b[0].y - b[1].y)/(b[0].x - b[1].x));
+				
 
 			}
 			if(b[0].x > b[1].x  && b[0].y < b[1].y){
-				angle = Math.PI + Math.tan((b[0].y - b[1].y)/(b[0].x - b[1].x));
-
+			
 			}
 			if(b[0].x < b[1].x  && b[0].y < b[1].y){
-				angle = 1.5 * Math.PI + Math.tan((b[0].y - b[1].y)/(b[0].x - b[1].x));
-
+				
 			}
+			System.out.println(b[0].vx);
+			System.out.println(b[0].vy);
+			//find the angle
+			angle = Math.atan2((b[0].y - b[1].y),(b[0].x - b[1].x));
 
-			
-			double angle1 = Math.tan((b[1].y - b[0].y)/(b[1].x - b[0].x));
-
-            double theta0 = Math.atan2(b[0].vy, b[0].vx);
-            double theta1 = Math.atan2(b[1].vy, b[1].vx);
-            double ang = Math.atan2(b[0].y - b[1].y, b[0].x - b[1].x);
-
+			//Rotate it
             b[0].vx = Math.cos(angle) * b[0].vx - Math.sin(angle) * b[0].vy;
             b[0].vy = Math.sin(angle) * b[0].vx + Math.cos(angle) * b[0].vy;
             b[1].vx = Math.cos(angle) * b[1].vx - Math.sin(angle) * b[1].vy;
             b[1].vy = Math.sin(angle) * b[1].vx + Math.cos(angle) * b[1].vy;
 
-            // New velocity
+			System.out.println(b[0].vx);
+			System.out.println(b[0].vy);
+			// New velocity
 			double newb0vx = ((b[0].weight*b[0].vx - b[1].weight*b[0].vx + 2*b[1].weight*b[1].vx)/(b[0].weight + b[1].weight));
             double newb0vy = ((b[0].weight*b[0].vy - b[1].weight*b[0].vy + 2*b[1].weight*b[1].vy)/(b[0].weight + b[1].weight));
+
+			System.out.println(b[0].vx);
+			System.out.println(b[0].vy);
 
 
             b[1].vx = ((2*b[0].weight * b[0].vx + b[1].weight*b[1].vx - b[0].weight*b[1].vx)/(b[0].weight + b[1].weight));
             b[1].vy = ((2*b[0].weight * b[0].vy + b[1].weight*b[1].vy - b[0].weight*b[1].vy)/(b[0].weight + b[1].weight));
 
-            b[0].vx = Math.cos(-angle) * newb0vx - Math.sin(-angle) * newb0vy;
-            b[0].vy = Math.sin(-angle) * newb0vx + Math.cos(-angle) * newb0vy;
-            b[1].vx = Math.cos(-angle) * b[1].vx - Math.sin(-angle) * b[1].vy;
-            b[1].vy = Math.sin(-angle) * b[1].vx + Math.cos(-angle) * b[1].vy;
+			System.out.println(b[0].vx);
+			System.out.println(b[0].vy);
 
-            b[0].x += b[0].vx * 0.001;
-            b[0].y += b[0].vy * 0.001;
-            b[1].x += b[1].vx * 0.001;
-            b[1].y += b[1].vy * 0.001;
+            b[0].vx = Math.cos(angle) * newb0vx + Math.sin(angle) * newb0vy;
+            b[0].vy = Math.cos(angle) * newb0vy - Math.sin(angle) * newb0vx;
+            b[1].vx = Math.cos(angle) * b[1].vx + Math.sin(angle) * b[1].vy;
+            b[1].vy = Math.cos(angle) * b[1].vy - Math.sin(angle) * b[1].vx;
+
+			System.out.println(b[0].vx);
+			System.out.println(b[0].vy);
+
+            
 
 		}
 	}
