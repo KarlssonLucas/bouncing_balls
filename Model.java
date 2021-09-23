@@ -1,7 +1,5 @@
 package bouncing_balls;
 
-import jdk.javadoc.internal.doclets.formats.html.SourceToHTMLConverter;
-
 /**
  * The physics model.
  * 
@@ -76,65 +74,42 @@ class Model {
 	void collide (Ball[] b){
 		if(b[0].radius + b[1].radius >= Math.abs(b[0].x - b[1].x) && b[0].radius + b[1].radius >= Math.abs(b[0].y - b[1].y)){
 			double angle = 0;
+
+            double deltax = Math.pow(b[0].x-b[1].x,2);
+            double deltay = Math.pow(b[0].y-b[1].y,2);
+
 			// Calculating angle
 			if(b[0].x > b[1].x  && b[0].y > b[1].y){
-				angle = Math.acos(b[0].x/((b[0].y*b[0].y* + b[0].x*b[0].x)));
-				
-				
+				angle = Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
 			}
 			if(b[0].x < b[1].x  && b[0].y > b[1].y){
-				angle = (Math.PI/2) + Math.acos(b[0].x/((b[0].y*b[0].y + b[0].x*b[0].x)));
-				
-
+				angle = Math.PI/2 + Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
 			}
 			if(b[0].x > b[1].x  && b[0].y < b[1].y){
-				angle = Math.PI + Math.acos(b[0].x/((b[0].y*b[0].y + b[0].x*b[0].x)));
-			
+				angle = 1.5* Math.PI + Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
 			}
 			if(b[0].x < b[1].x  && b[0].y < b[1].y){
-				angle = 1.5 * Math.PI + Math.acos(  + b[0].x/(b[0].y*b[0].y + (b[0].x*(b[0].x))));
+				angle = Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
 				
 			}
-			System.out.println(angle);
-			System.out.println(b[0].vx);
-			System.out.println(b[0].vy);
-			//find the angle
-			//angle = Math.atan2((b[0].y - b[1].y),(b[0].x - b[1].x));
-			
 
+            System.out.println(angle);
 			//Rotate it
             b[0].vx = Math.cos(angle) * b[0].vx - Math.sin(angle) * b[0].vy;
             b[0].vy = Math.sin(angle) * b[0].vx + Math.cos(angle) * b[0].vy;
             b[1].vx = Math.cos(angle) * b[1].vx - Math.sin(angle) * b[1].vy;
             b[1].vy = Math.sin(angle) * b[1].vx + Math.cos(angle) * b[1].vy;
 
-			System.out.println(b[0].vx);
-			System.out.println(b[0].vy);
 			// New velocity
 			double newb0vx = ((b[0].weight*b[0].vx - b[1].weight*b[0].vx + 2*b[1].weight*b[1].vx)/(b[0].weight + b[1].weight));
-            //double newb0vy = ((b[0].weight*b[0].vy - b[1].weight*b[0].vy + 2*b[1].weight*b[1].vy)/(b[0].weight + b[1].weight));
-			double newb0vy = b[0].vy;
-
-			System.out.println(b[0].vx);
-			System.out.println(b[0].vy);
-
-
+            double newb0vy = ((b[0].weight*b[0].vy - b[1].weight*b[0].vy + 2*b[1].weight*b[1].vy)/(b[0].weight + b[1].weight));
             b[1].vx = ((2*b[0].weight * b[0].vx + b[1].weight*b[1].vx - b[0].weight*b[1].vx)/(b[0].weight + b[1].weight));
-           // b[1].vy = ((2*b[0].weight * b[0].vy + b[1].weight*b[1].vy - b[0].weight*b[1].vy)/(b[0].weight + b[1].weight));
+            b[1].vy = ((2*b[0].weight * b[0].vy + b[1].weight*b[1].vy - b[0].weight*b[1].vy)/(b[0].weight + b[1].weight));
 
-			System.out.println(b[0].vx);
-			System.out.println(b[0].vy);
-
-            b[0].vx = Math.cos(angle) * newb0vx + Math.sin(angle) * newb0vy;
-            b[0].vy = Math.cos(angle) * newb0vy - Math.sin(angle) * newb0vx;
-            b[1].vx = Math.cos(angle) * b[1].vx + Math.sin(angle) * b[1].vy;
-            b[1].vy = Math.cos(angle) * b[1].vy - Math.sin(angle) * b[1].vx;
-
-			System.out.println(b[0].vx);
-			System.out.println(b[0].vy);
-
-            
-
+            b[0].vx = Math.cos(-angle) * newb0vx - Math.sin(-angle) * newb0vy;
+            b[0].vy = Math.cos(-angle) * newb0vy + Math.sin(-angle) * newb0vx;
+            b[1].vx = Math.cos(-angle) * b[1].vx - Math.sin(-angle) * b[1].vy;
+            b[1].vy = Math.cos(-angle) * b[1].vy + Math.sin(-angle) * b[1].vx;
 		}
 	}
 
