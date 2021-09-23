@@ -22,13 +22,13 @@ class Model {
 		
 		// Initialize the model with a few balls
 		balls = new Ball[2];
-		balls[0] = new Ball(width / 3, height * 0.7, 1, 5, 0.2);
-		balls[1] = new Ball(width / 3, height * 20, 0, 5, 0.2);
+		balls[0] = new Ball(width / 3, height * 0.9, 1.2, 1.6, 0.2);
+		balls[1] = new Ball(width / 3, height * 0.7, -0.0, 0.6, 0.3);
 	}
 
 
 	void step(double deltaT) {
-		double g = 0;
+		double g = 5;
 		// TODO this method implements one step of simulation with a step deltaT
 		for (Ball b : balls) {
 			
@@ -47,13 +47,11 @@ class Model {
 				if (b.vy <0){
 					b.vy -= (g*deltaT)/2;
 					b.y = b.radius;
-					System.out.println(b.vy + b.vy);
 					
 					
 				} else{
 					b.vy -= (g*deltaT)/2;
 					b.y = areaHeight-b.radius;	
-					
 				}
 				b.vy *= -1;	
 			}
@@ -71,45 +69,40 @@ class Model {
 
 		
 	}
+
+    void rotate (Ball b, double a) {
+        b.vx = Math.cos(a) * b.vx - Math.sin(a) * b.vy;
+        b.vy = Math.sin(a) * b.vx + Math.cos(a) * b.vy;
+    }
+
 	void collide (Ball[] b){
-		if(b[0].radius + b[1].radius >= Math.abs(b[0].x - b[1].x) && b[0].radius + b[1].radius >= Math.abs(b[0].y - b[1].y)){
-			double angle = 0;
+        double deltax = Math.pow(b[0].x-b[1].x,2);
+        double deltay = Math.pow(b[0].y-b[1].y,2);
+        double dist = Math.sqrt(Math.pow(deltax,2) + Math.pow(deltay,2));
 
-            double deltax = Math.pow(b[0].x-b[1].x,2);
-            double deltay = Math.pow(b[0].y-b[1].y,2);
+		if(b[0].radius + b[1].radius >= dist){
 
-			// Calculating angle
-			if(b[0].x > b[1].x  && b[0].y > b[1].y){
-				angle = Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
-			}
-			if(b[0].x < b[1].x  && b[0].y > b[1].y){
-				angle = Math.PI/2 + Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
-			}
-			if(b[0].x > b[1].x  && b[0].y < b[1].y){
-				angle = 1.5* Math.PI + Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
-			}
-			if(b[0].x < b[1].x  && b[0].y < b[1].y){
-				angle = Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
-				
-			}
+			double angle = Math.acos(deltax/dist);
+            
+            if(b[0].x < b[1].x && b[0].y > b[1].y) {
+                angle = Math.PI -angle;
+            } else if (b[0].x < b[1].x && b[0].y < b[1].y) {
+                angle = -Math.PI -angle;
+            }
 
-            System.out.println(angle);
-			//Rotate it
-            b[0].vx = Math.cos(angle) * b[0].vx - Math.sin(angle) * b[0].vy;
-            b[0].vy = Math.sin(angle) * b[0].vx + Math.cos(angle) * b[0].vy;
-            b[1].vx = Math.cos(angle) * b[1].vx - Math.sin(angle) * b[1].vy;
-            b[1].vy = Math.sin(angle) * b[1].vx + Math.cos(angle) * b[1].vy;
 
-			// New velocity
-			double newb0vx = ((b[0].weight*b[0].vx - b[1].weight*b[0].vx + 2*b[1].weight*b[1].vx)/(b[0].weight + b[1].weight));
-            double newb0vy = ((b[0].weight*b[0].vy - b[1].weight*b[0].vy + 2*b[1].weight*b[1].vy)/(b[0].weight + b[1].weight));
-            b[1].vx = ((2*b[0].weight * b[0].vx + b[1].weight*b[1].vx - b[0].weight*b[1].vx)/(b[0].weight + b[1].weight));
-            b[1].vy = ((2*b[0].weight * b[0].vy + b[1].weight*b[1].vy - b[0].weight*b[1].vy)/(b[0].weight + b[1].weight));
+            rotate(b[0], angle);
+            rotate(b[1], angle);
 
-            b[0].vx = Math.cos(-angle) * newb0vx - Math.sin(-angle) * newb0vy;
-            b[0].vy = Math.cos(-angle) * newb0vy + Math.sin(-angle) * newb0vx;
-            b[1].vx = Math.cos(-angle) * b[1].vx - Math.sin(-angle) * b[1].vy;
-            b[1].vy = Math.cos(-angle) * b[1].vy + Math.sin(-angle) * b[1].vx;
+            double r = b[1].vx - b[0].vx;
+            double i = b[0].weight * b[0].vx + b[1].weight*b[1].vx;
+
+            b[1].vx = (i - b[0].weight*r)/(b[0].weight+b[1].weight);
+            b[0].vx = (i-b[1].weight*b[1].vx)/(b[0].weight);
+
+            rotate(b[0], -angle);
+            rotate(b[1], -angle);
+
 		}
 	}
 
