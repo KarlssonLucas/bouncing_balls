@@ -22,13 +22,13 @@ class Model {
 		
 		// Initialize the model with a few balls
 		balls = new Ball[2];
-		balls[0] = new Ball(width / 3, height * 0.7, 1, 5, 0.2);
-		balls[1] = new Ball(width / 3, height * 20, 0, 5, 0.2);
+		balls[0] = new Ball(width / 3, height * 0.7, 1, 2, 0.2);
+		balls[1] = new Ball(width / 3, height * 20, 0, 2, 0.22);
 	}
 
 
 	void step(double deltaT) {
-		double g = 0;
+		double g = 4;
 		// TODO this method implements one step of simulation with a step deltaT
 		for (Ball b : balls) {
 			
@@ -47,8 +47,6 @@ class Model {
 				if (b.vy <0){
 					b.vy -= (g*deltaT)/2;
 					b.y = b.radius;
-					System.out.println(b.vy + b.vy);
-					
 					
 				} else{
 					b.vy -= (g*deltaT)/2;
@@ -79,21 +77,33 @@ class Model {
             double deltay = Math.pow(b[0].y-b[1].y,2);
 
 			// Calculating angle
+			
+			angle = Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
+			
 			if(b[0].x > b[1].x  && b[0].y > b[1].y){
-				angle = Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
-			}
-			if(b[0].x < b[1].x  && b[0].y > b[1].y){
-				angle = Math.PI/2 + Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
-			}
-			if(b[0].x > b[1].x  && b[0].y < b[1].y){
-				angle = 1.5* Math.PI + Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
-			}
-			if(b[0].x < b[1].x  && b[0].y < b[1].y){
-				angle = Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
+				
+				//Do nothing, base case
 				
 			}
+			if(b[0].x < b[1].x  && b[0].y > b[1].y){
+				System.out.println(angle);
+				angle = Math.PI - angle;
+				System.out.println(angle);
+				System.out.println("_______");
+				
+			}
+			if(b[0].x > b[1].x  && b[0].y < b[1].y){
+				angle = -(Math.PI-angle);
+				
+			
+			}
+			if(b[0].x < b[1].x  && b[0].y < b[1].y){
+				System.out.println(angle);
+				angle = -angle;
+				System.out.println("_______");
+				//Do nothing, base case
+			}
 
-            System.out.println(angle);
 			//Rotate it
             b[0].vx = Math.cos(angle) * b[0].vx - Math.sin(angle) * b[0].vy;
             b[0].vy = Math.sin(angle) * b[0].vx + Math.cos(angle) * b[0].vy;
