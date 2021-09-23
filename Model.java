@@ -50,12 +50,10 @@ class Model {
 					
 				} else{
 					b.vy -= (g*deltaT)/2;
-					b.y = areaHeight-b.radius;	
-					
+					b.y = areaHeight-b.radius;		
 				}
 				b.vy *= -1;	
 			}
-			
 			// compute new position according to the speed of the ball
 			collide(balls);	
 			b.x += deltaT * b.vx;
@@ -98,7 +96,7 @@ class Model {
 		if(b[0].x > b[1].x  && b[0].y < b[1].y){
 			System.out.println("Third if");
 			System.out.println(angle);
-			angle = -(Math.PI-angle);
+			//angle = -(Math.PI-angle);
 			System.out.println(angle);
 			System.out.println("_______");	
 						
