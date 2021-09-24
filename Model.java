@@ -122,7 +122,7 @@ class Model {
 	}
 
 	void collide (Ball[] b){
-		if(b[0].radius + b[1].radius >= Math.abs(b[0].x - b[1].x) && b[0].radius + b[1].radius >= Math.abs(b[0].y - b[1].y)){
+		if(b[0].radius + b[1].radius >= Math.sqrt(Math.pow((b[0].y - b[1].y),2)+Math.pow((b[0].x - b[1].x),2))){
 			double angle = getAngle(b);
 			
 			//Rotate it
