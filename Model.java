@@ -28,7 +28,7 @@ class Model {
 
 
 	void step(double deltaT) {
-		double g = 5;
+		double g = 2;
 		// TODO this method implements one step of simulation with a step deltaT
 		for (Ball b : balls) {
 			// detect collision with the border
@@ -72,13 +72,17 @@ class Model {
 	}
 
 	void collide (Ball[] b){
+		
+		// Distance between balls
 		double dist = Math.sqrt(Math.pow(b[0].x-b[1].x, 2) + Math.pow(b[0].y-b[1].y,2));
-		if(Math.pow(b[0].radius + b[1].radius,2) >= dist*dist){
+		if(Math.pow(b[0].radius + b[1].radius,2) >= dist*dist){ //Sum of radius greater than distance between balls
 			double angle = getAngle(b);
 
+			// Temp variables
 			double vx0temp = b[0].vx;
 			double vx1temp = b[1].vx;
 			
+			// Rotation matrix
             b[0].vx = Math.cos(angle) * vx0temp - Math.sin(angle) * b[0].vy;
             b[0].vy = Math.cos(angle) * b[0].vy + Math.sin(angle) * vx0temp;
             b[1].vx = Math.cos(angle) * vx1temp - Math.sin(angle) * b[1].vy;
@@ -89,9 +93,11 @@ class Model {
 			double newb0vy = b[0].vy;
             b[1].vx = ((2*b[0].weight * b[0].vx + b[1].weight*b[1].vx - b[0].weight*b[1].vx)/(b[0].weight + b[1].weight));
 
+			// Temp variables
 			double newb1vx = b[1].vx;
 			double newb1vy = b[1].vy;
 
+			// Rotate back with -angle
             b[0].vx = Math.cos(-angle) * newb0vx - Math.sin(-angle) * newb0vy;
             b[0].vy = Math.cos(-angle) * newb0vy + Math.sin(-angle) * newb0vx;
             b[1].vx = Math.cos(-angle) * newb1vx - Math.sin(-angle) * newb1vy;
@@ -99,8 +105,8 @@ class Model {
 
 			//remove overlaps
 			double instersectD = dist - b[0].radius - b[1].radius; //overlapping distance
-			b[0].x -= instersectD * (10 + b[0].x - b[1].x)/dist;
-			b[0].y -= instersectD * (10 + b[0].y - b[1].y)/dist;
+			b[0].x -= instersectD * (0.2 + b[0].x - b[1].x)/dist; //Uniform triangle
+			b[0].y -= instersectD * (0.2 + b[0].y - b[1].y)/dist;
 	
 		}
 	}
