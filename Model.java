@@ -112,7 +112,7 @@ class Model {
 			//remove overlaps so that the balls don't get stuck.
 			double instersectD = dist - b[0].radius - b[1].radius; //overlapping distance
 			b[0].x -= instersectD * (0.2 + b[0].x - b[1].x)/dist; //Find distance in x direction(similar triangle), 0.2 disturbs the uniform abit but it is good to have an offset in case it still is stuck
-			b[0].y -= instersectD * (0.2  + b[0].y - b[1].y)/dist; //Find distance in x direction(similar triangle), 0.2 disturbs the uniform abit but it is good to have an offset in case it still is stuck
+			b[0].y -= instersectD * (0.2  + b[0].y - b[1].y)/dist; //Find distance in y direction(similar triangle), 0.2 disturbs the uniform abit but it is good to have an offset in case it still is stuck
 	
 		}
 	}
