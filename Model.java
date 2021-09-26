@@ -28,10 +28,9 @@ class Model {
 
 
 	void step(double deltaT) {
-		double g = 9;
+		double g = 5;
 		// TODO this method implements one step of simulation with a step deltaT
 		for (Ball b : balls) {
-			
 			// detect collision with the border
 			if (b.x < b.radius || b.x > areaWidth - b.radius) {
 				if (b.vx < 0){
@@ -59,12 +58,12 @@ class Model {
 		
 			// (at^2)/2
 			b.vy += (-g * deltaT)/2;
-			collide(balls);	
-			// (s = vt + acceleration)
+
 			b.y += deltaT * b.vy;
 			b.x += deltaT * b.vx;
-			
-			
+			collide(balls);	
+			// (s = vt + acceleration)
+				
 		}
 	}
 	double getAngle(Ball[] b){
@@ -77,37 +76,37 @@ class Model {
 		//Which quadrant does it hit
 		if(b[0].x > b[1].x  && b[0].y > b[1].y){
 			angle = -angle; 
-			System.out.println("First if");
+			System.out.println("First if if");
 			System.out.println("_______");
 			//Do nothing, base case
 		}
-
 		if(b[0].x < b[1].x  && b[0].y > b[1].y){
 			System.out.println("Second if");
 			System.out.println(angle);
-			angle = (Math.PI-angle);
+			angle = Math.PI-angle;
 			
 			System.out.println(angle);
 			System.out.println("_______");
 				
 		}
+		
 		if(b[0].x < b[1].x  && b[0].y < b[1].y){
 			System.out.println("Third if");
 			System.out.println(angle);
-			angle = (Math.PI-angle);
+			angle = -angle;
+			
 			System.out.println(angle);
 			System.out.println("_______");
-		
+		}
+		if(b[0].x > b[1].x  && b[0].y < b[1].y){
+			System.out.println("Second if");
+			System.out.println(angle);
+			angle = Math.PI-angle;
+			System.out.println(angle);
+			System.out.println("_______");				
 		}
 
-		if(b[0].x > b[1].x  && b[0].y < b[1].y){
-			System.out.println("Fourth if");
-			System.out.println(angle);
-			angle = -angle;
-			System.out.println(angle);
-			System.out.println("_______");	
-						
-		}
+		
 		return angle;
 	}
 
@@ -120,8 +119,10 @@ class Model {
 	}
 
 	void collide (Ball[] b){
-		if(b[0].radius + b[1].radius >= Math.sqrt(Math.pow((b[0].y - b[1].y),2)+Math.pow((b[0].x - b[1].x),2))){
+		double dist = Math.sqrt(Math.pow(b[0].x-b[1].x, 2) + Math.pow(b[0].y-b[1].y,2));
+		if(Math.pow(b[0].radius + b[1].radius,2) >= dist*dist){
 			double angle = getAngle(b);
+			
 			
 			//Rotate it
 			rotate(b[0],angle);
@@ -142,6 +143,12 @@ class Model {
             b[0].vy = Math.cos(-angle) * newb0vy + Math.sin(-angle) * newb0vx;
             b[1].vx = Math.cos(-angle) * temp1 - Math.sin(-angle) * temp2;
             b[1].vy = Math.cos(-angle) * temp2 + Math.sin(-angle) * temp1;
+			//remove overlaps
+			double instersectD = dist - b[0].radius - b[1].radius;
+			b[0].x -= instersectD * (0.2 + b[0].x - b[1].x)/dist;
+			b[0].y -= instersectD * (0.2 + b[0].y - b[1].y)/dist;
+
+	
 		}
 	}
 
