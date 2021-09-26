@@ -10,6 +10,9 @@ package bouncing_balls;
  * @author Simon Robillard
  *
  */
+/*
+We did not find a way to check if there are any energyleaks in the system, we checked this by keeping the program on for 10 minutes to see if the balls got slower.
+*/
 class Model {
 
 	double areaWidth, areaHeight;
@@ -44,10 +47,12 @@ class Model {
 			}
 			if (b.y < b.radius || b.y > areaHeight - b.radius) {
 				if (b.vy <0){
+					//Gravity needs to stay active during collision
 					b.vy -= (g*deltaT)/2;
 					b.y = b.radius;
 					
 				} else{
+					//Gravity needs to stay active during collision
 					b.vy -= (g*deltaT)/2;
 					b.y = areaHeight-b.radius;		
 				}
@@ -56,9 +61,9 @@ class Model {
 			// compute new position according to the speed of the ball
 		
 		
-			// (at^2)/2
+			// v = (at)/2
 			b.vy += (-g * deltaT)/2;
-
+			//s = vt + (at^2)/2
 			b.y += deltaT * b.vy;
 			b.x += deltaT * b.vx;
 			collide(balls);	
@@ -67,18 +72,17 @@ class Model {
 		}
 	}
 	double getAngle(Ball[] b){
-		// Calculating angle
+		//Calculating angle, atan2 can find angles in all directions of the unit circle, no need to hard code depending on where on the unit circle it collides
 		return Math.atan2(b[0].vy, b[0].vx);
 	}
 
 	void collide (Ball[] b){
-		
 		// Distance between balls
 		double dist = Math.sqrt(Math.pow(b[0].x-b[1].x, 2) + Math.pow(b[0].y-b[1].y,2));
-		if(Math.pow(b[0].radius + b[1].radius,2) >= dist*dist){ //Sum of radius greater than distance between balls
+		if(Math.sqrt(Math.pow(b[0].radius + b[1].radius,2)) >= dist){ //Collided if distance is lower than the radius of the two balls.
 			double angle = getAngle(b);
 
-			// Temp variables
+			//Temp variables for rotation
 			double vx0temp = b[0].vx;
 			double vx1temp = b[1].vx;
 			
@@ -88,8 +92,11 @@ class Model {
             b[1].vx = Math.cos(angle) * vx1temp - Math.sin(angle) * b[1].vy;
             b[1].vy = Math.cos(angle) * b[1].vy + Math.sin(angle) * vx1temp;
 
-			// New velocity
+			//New velocity
+			//Solved this by equationsystem with kinetic energy and momentum
 			double newb0vx = ((b[0].weight*b[0].vx - b[1].weight*b[0].vx + 2*b[1].weight*b[1].vx)/(b[0].weight + b[1].weight));
+
+			//v0y not affected after rotation
 			double newb0vy = b[0].vy;
             b[1].vx = ((2*b[0].weight * b[0].vx + b[1].weight*b[1].vx - b[0].weight*b[1].vx)/(b[0].weight + b[1].weight));
 
@@ -97,16 +104,16 @@ class Model {
 			double newb1vx = b[1].vx;
 			double newb1vy = b[1].vy;
 
-			// Rotate back with -angle
+			//Rotate back with -angle
             b[0].vx = Math.cos(-angle) * newb0vx - Math.sin(-angle) * newb0vy;
             b[0].vy = Math.cos(-angle) * newb0vy + Math.sin(-angle) * newb0vx;
             b[1].vx = Math.cos(-angle) * newb1vx - Math.sin(-angle) * newb1vy;
             b[1].vy = Math.cos(-angle) * newb1vy + Math.sin(-angle) * newb1vx;
 
-			//remove overlaps
+			//remove overlaps so that the balls don't get stuck.
 			double instersectD = dist - b[0].radius - b[1].radius; //overlapping distance
-			b[0].x -= instersectD * (0.2 + b[0].x - b[1].x)/dist; //Uniform triangle
-			b[0].y -= instersectD * (0.2 + b[0].y - b[1].y)/dist;
+			b[0].x -= instersectD * (0.2 + b[0].x - b[1].x)/dist; //Find distance in x direction(similar triangle), 0.2 disturbs the uniform abit but it is good to have an offset in case it still is stuck
+			b[0].y -= instersectD * (0.2  + b[0].y - b[1].y)/dist; //Find distance in x direction(similar triangle), 0.2 disturbs the uniform abit but it is good to have an offset in case it still is stuck
 	
 		}
 	}
@@ -123,7 +130,7 @@ class Model {
 			this.vx = vx;
 			this.vy = vy;
 			this.radius = r;
-            this.weight = Math.pow(r,2);
+            this.weight = Math.pow(r,2); //Assuming that the balls are made from the same material
 		}
 
 		/**
