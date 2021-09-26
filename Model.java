@@ -66,29 +66,24 @@ class Model {
 		}
 	}
 	double getAngle(Ball[] b){
-		double angle = 0;
         double deltax = Math.pow(b[0].x-b[1].x,2);
         double deltay = Math.pow(b[0].y-b[1].y,2);
 
 		// Calculating angle
-		angle = Math.asin(deltay/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
+		double angle = Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
 		
 		//Which quadrant does it hit
 		if(b[0].x > b[1].x  && b[0].y > b[1].y){
-			angle = Math.PI/2-angle; 
+			//angle = -angle; 
 			System.out.println("First if");
 			System.out.println("_______");
 			//Do nothing, base case
-				
-				//Do nothing, base case
-				
 		}
 
 		if(b[0].x < b[1].x  && b[0].y > b[1].y){
 			System.out.println("Second if");
 			System.out.println(angle);
 			angle = (Math.PI-angle);
-			
 			
 			System.out.println(angle);
 			System.out.println("_______");
@@ -97,7 +92,7 @@ class Model {
 		if(b[0].x < b[1].x  && b[0].y < b[1].y){
 			System.out.println("Third if");
 			System.out.println(angle);
-			angle = -(Math.PI-angle);
+			angle = (Math.PI-angle);
 			System.out.println(angle);
 			System.out.println("_______");
 		
@@ -128,8 +123,11 @@ class Model {
 			
 			//Rotate it
 			
-			rotate(b[0], angle);
-			rotate(b[1], angle);
+			b[0].vx = Math.cos(angle) * b[0].vx - Math.sin(angle) * b[0].vy;
+            b[0].vy = Math.cos(angle) * b[0].vy + Math.sin(angle) * b[0].vx;
+            b[1].vx = Math.cos(angle) * b[1].vx - Math.sin(angle) * b[1].vy;
+            b[1].vy = Math.cos(angle) * b[1].vy + Math.sin(angle) * b[1].vx;
+
 
 			// New velocity
 			double newb0vx = ((b[0].weight*b[0].vx - b[1].weight*b[0].vx + 2*b[1].weight*b[1].vx)/(b[0].weight + b[1].weight));
