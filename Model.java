@@ -23,7 +23,7 @@ class Model {
 		// Initialize the model with a few balls
 		balls = new Ball[2];
 		balls[0] = new Ball(width / 3, height * 0.7, 2, 2, 0.2);
-		balls[1] = new Ball(width / 3, height * 20, 1, 2, 0.22);
+		balls[1] = new Ball(width / 3, height * 20, 1, 2, 0.4);
 	}
 
 
@@ -67,87 +67,40 @@ class Model {
 		}
 	}
 	double getAngle(Ball[] b){
-        double deltax = b[0].x-b[1].x;
-        double deltay = b[0].y-b[1].y;
-
 		// Calculating angle
-		double angle = Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
-		
-		//Which quadrant does it hit
-		if(b[0].x > b[1].x  && b[0].y > b[1].y){
-			angle = -angle; 
-			System.out.println("First if if");
-			System.out.println("_______");
-			//Do nothing, base case
-		}
-		if(b[0].x < b[1].x  && b[0].y > b[1].y){
-			System.out.println("Second if");
-			System.out.println(angle);
-			angle = Math.PI-angle;
-			
-			System.out.println(angle);
-			System.out.println("_______");
-				
-		}
-		
-		if(b[0].x < b[1].x  && b[0].y < b[1].y){
-			System.out.println("Third if");
-			System.out.println(angle);
-			angle = -angle;
-			
-			System.out.println(angle);
-			System.out.println("_______");
-		}
-		if(b[0].x > b[1].x  && b[0].y < b[1].y){
-			System.out.println("Second if");
-			System.out.println(angle);
-			angle = Math.PI-angle;
-			System.out.println(angle);
-			System.out.println("_______");				
-		}
-
-		
-		return angle;
-	}
-
-		
-	void rotate (Ball b, double angle){
-		double temp1 = b.vx;
-		double temp2 = b.vy;
-		b.vx = Math.cos(angle) * temp1 - Math.sin(angle) * temp2;
-		b.vy = Math.sin(angle) * temp1 + Math.cos(angle) * temp2;
+		return Math.atan2(b[0].vy, b[0].vx);
 	}
 
 	void collide (Ball[] b){
 		double dist = Math.sqrt(Math.pow(b[0].x-b[1].x, 2) + Math.pow(b[0].y-b[1].y,2));
 		if(Math.pow(b[0].radius + b[1].radius,2) >= dist*dist){
 			double angle = getAngle(b);
-			
-			
-			//Rotate it
-			rotate(b[0],angle);
-			rotate(b[1],angle);
 
+			double vx0temp = b[0].vx;
+			double vx1temp = b[1].vx;
+			
+            b[0].vx = Math.cos(angle) * vx0temp - Math.sin(angle) * b[0].vy;
+            b[0].vy = Math.cos(angle) * b[0].vy + Math.sin(angle) * vx0temp;
+            b[1].vx = Math.cos(angle) * vx1temp - Math.sin(angle) * b[1].vy;
+            b[1].vy = Math.cos(angle) * b[1].vy + Math.sin(angle) * vx1temp;
 
 			// New velocity
 			double newb0vx = ((b[0].weight*b[0].vx - b[1].weight*b[0].vx + 2*b[1].weight*b[1].vx)/(b[0].weight + b[1].weight));
 			double newb0vy = b[0].vy;
-           // double newb0vy = ((b[0].weight*b[0].vy - b[1].weight*b[0].vy + 2*b[1].weight*b[1].vy)/(b[0].weight + b[1].weight));
             b[1].vx = ((2*b[0].weight * b[0].vx + b[1].weight*b[1].vx - b[0].weight*b[1].vx)/(b[0].weight + b[1].weight));
-            //b[1].vy = ((2*b[0].weight * b[0].vy + b[1].weight*b[1].vy - b[0].weight*b[1].vy)/(b[0].weight + b[1].weight));
-			double temp1 = b[1].vx;
-			double temp2 = b[1].vy;
-			//rotate(b[0],-angle);
-			//rotate(b[1],-angle);
+
+			double newb1vx = b[1].vx;
+			double newb1vy = b[1].vy;
+
             b[0].vx = Math.cos(-angle) * newb0vx - Math.sin(-angle) * newb0vy;
             b[0].vy = Math.cos(-angle) * newb0vy + Math.sin(-angle) * newb0vx;
-            b[1].vx = Math.cos(-angle) * temp1 - Math.sin(-angle) * temp2;
-            b[1].vy = Math.cos(-angle) * temp2 + Math.sin(-angle) * temp1;
+            b[1].vx = Math.cos(-angle) * newb1vx - Math.sin(-angle) * newb1vy;
+            b[1].vy = Math.cos(-angle) * newb1vy + Math.sin(-angle) * newb1vx;
+
 			//remove overlaps
-			double instersectD = dist - b[0].radius - b[1].radius;
+			double instersectD = dist - b[0].radius - b[1].radius; //overlapping distance
 			b[0].x -= instersectD * (0.2 + b[0].x - b[1].x)/dist;
 			b[0].y -= instersectD * (0.2 + b[0].y - b[1].y)/dist;
-
 	
 		}
 	}
