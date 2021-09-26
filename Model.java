@@ -60,7 +60,6 @@ class Model {
 			}
 			// compute new position according to the speed of the ball
 		
-		
 			// v = (at)/2
 			b.vy += (-g * deltaT)/2;
 			//s = vt + (at^2)/2
@@ -72,7 +71,7 @@ class Model {
 		}
 	}
 	double getAngle(Ball[] b){
-		//Calculating angle, atan2 can find angles in all directions of the unit circle, no need to hard code depending on where on the unit circle it collides
+		//Calculating angle, atan2 can find angles in all directions of the unit circle
 		return Math.atan2(b[0].vy, b[0].vx);
 	}
 
@@ -86,7 +85,7 @@ class Model {
 			double vx0temp = b[0].vx;
 			double vx1temp = b[1].vx;
 			
-			// Rotation matrix
+			//Rotation matrix
             b[0].vx = Math.cos(angle) * vx0temp - Math.sin(angle) * b[0].vy;
             b[0].vy = Math.cos(angle) * b[0].vy + Math.sin(angle) * vx0temp;
             b[1].vx = Math.cos(angle) * vx1temp - Math.sin(angle) * b[1].vy;
