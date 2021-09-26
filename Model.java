@@ -28,7 +28,7 @@ class Model {
 
 
 	void step(double deltaT) {
-		double g = 2;
+		double g = 9;
 		// TODO this method implements one step of simulation with a step deltaT
 		for (Ball b : balls) {
 			
@@ -70,12 +70,12 @@ class Model {
         double deltax = Math.pow(b[0].x-b[1].x,2);
         double deltay = Math.pow(b[0].y-b[1].y,2);
 
-			// Calculating angle
-			
-		angle = Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
-			
+		// Calculating angle
+		angle = Math.asin(deltay/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
+		
+		//Which quadrant does it hit
 		if(b[0].x > b[1].x  && b[0].y > b[1].y){
-			angle = -angle; 
+			angle = Math.PI/2-angle; 
 			System.out.println("First if");
 			System.out.println("_______");
 			//Do nothing, base case
@@ -87,7 +87,7 @@ class Model {
 		if(b[0].x < b[1].x  && b[0].y > b[1].y){
 			System.out.println("Second if");
 			System.out.println(angle);
-			angle = -(Math.PI-angle);
+			angle = (Math.PI-angle);
 			
 			
 			System.out.println(angle);
@@ -97,7 +97,7 @@ class Model {
 		if(b[0].x < b[1].x  && b[0].y < b[1].y){
 			System.out.println("Third if");
 			System.out.println(angle);
-			angle = Math.PI-angle;
+			angle = -(Math.PI-angle);
 			System.out.println(angle);
 			System.out.println("_______");
 		
@@ -106,6 +106,7 @@ class Model {
 		if(b[0].x > b[1].x  && b[0].y < b[1].y){
 			System.out.println("Fourth if");
 			System.out.println(angle);
+			angle = -angle;
 			System.out.println(angle);
 			System.out.println("_______");	
 						
@@ -138,8 +139,8 @@ class Model {
             //b[1].vy = ((2*b[0].weight * b[0].vy + b[1].weight*b[1].vy - b[0].weight*b[1].vy)/(b[0].weight + b[1].weight));
 			double temp1 = b[1].vx;
 			double temp2 = b[1].vy;
-			rotate(b[0],-angle);
-			rotate(b[1],-angle);
+			//rotate(b[0],-angle);
+			//rotate(b[1],-angle);
             b[0].vx = Math.cos(-angle) * newb0vx - Math.sin(-angle) * newb0vy;
             b[0].vy = Math.cos(-angle) * newb0vy + Math.sin(-angle) * newb0vx;
             b[1].vx = Math.cos(-angle) * temp1 - Math.sin(-angle) * temp2;
