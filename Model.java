@@ -55,26 +55,28 @@ class Model {
 				b.vy *= -1;	
 			}
 			// compute new position according to the speed of the ball
-			collide(balls);	
-			b.x += deltaT * b.vx;
+		
+		
 			// (at^2)/2
 			b.vy += (-g * deltaT)/2;
+			collide(balls);	
 			// (s = vt + acceleration)
 			b.y += deltaT * b.vy;
+			b.x += deltaT * b.vx;
 			
 			
 		}
 	}
 	double getAngle(Ball[] b){
-        double deltax = Math.pow(b[0].x-b[1].x,2);
-        double deltay = Math.pow(b[0].y-b[1].y,2);
+        double deltax = b[0].x-b[1].x;
+        double deltay = b[0].y-b[1].y;
 
 		// Calculating angle
 		double angle = Math.acos(deltax/Math.sqrt((Math.pow(deltay,2) + Math.pow(deltax,2))));
 		
 		//Which quadrant does it hit
 		if(b[0].x > b[1].x  && b[0].y > b[1].y){
-			//angle = -angle; 
+			angle = -angle; 
 			System.out.println("First if");
 			System.out.println("_______");
 			//Do nothing, base case
@@ -122,11 +124,8 @@ class Model {
 			double angle = getAngle(b);
 			
 			//Rotate it
-			
-			b[0].vx = Math.cos(angle) * b[0].vx - Math.sin(angle) * b[0].vy;
-            b[0].vy = Math.cos(angle) * b[0].vy + Math.sin(angle) * b[0].vx;
-            b[1].vx = Math.cos(angle) * b[1].vx - Math.sin(angle) * b[1].vy;
-            b[1].vy = Math.cos(angle) * b[1].vy + Math.sin(angle) * b[1].vx;
+			rotate(b[0],angle);
+			rotate(b[1],angle);
 
 
 			// New velocity
